@@ -1,6 +1,8 @@
 name: Workflow for deployment of a service in K8S
-on: 
-    workflow_dispatch:
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   setup_config_secret:
