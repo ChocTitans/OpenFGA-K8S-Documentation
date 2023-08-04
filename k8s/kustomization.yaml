@@ -20,6 +20,6 @@ secretGenerator:
 
 
 configMapGenerator:
-- name: lago-configmap
+- name: openfga-configmap
   envs:
   - configmap.env
