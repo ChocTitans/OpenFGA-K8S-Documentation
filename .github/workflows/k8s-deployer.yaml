@@ -40,4 +40,5 @@ jobs:
 
       - name: Kustomize build & apply
         run: |
+          cd ./k8s
           kustomize build . | kubectl apply -f -
