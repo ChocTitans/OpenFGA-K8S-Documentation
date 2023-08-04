@@ -1,0 +1,25 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namePrefix: app-
+metadata:
+  name: openfga-ressources
+commonLabels:
+  app: openfga
+
+
+resources:
+- ./postgres
+- ./openfga
+- ./migrate
+
+
+secretGenerator:
+- name: openfga-secret
+  envs:
+  - secret.env
+
+
+configMapGenerator:
+- name: lago-configmap
+  envs:
+  - configmap.env

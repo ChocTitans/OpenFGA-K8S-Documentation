@@ -1,0 +1,24 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: openfga-migrate
+  labels:
+    app.kubernetes.io/name: openfga
+spec:
+  template:
+    spec:
+      serviceAccountName: openfga
+      containers:
+        - name: migrate-database
+          image: "openfga/openfga:v1.2.0"
+          args: ["migrate"]
+          env:
+            - name: OPENFGA_DATASTORE_ENGINE
+              value: "postgres"
+            - name: OPENFGA_DATASTORE_URI
+              valueFrom:
+                secretKeyRef:
+                  name: openfga-secret
+                  key: DATABASE_URL
+      restartPolicy: Never
+  backoffLimit: 1

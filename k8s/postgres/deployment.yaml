@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openfga-postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: openfga-postgres
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: openfga-postgres
+    spec:
+      containers:
+        - env:
+            - name: PGDATA
+              value: /data/postgres/openfga
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: openfga-secret
+                  key: POSTGRES_DB
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: openfga-secret
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: openfga-secret
+                  key: POSTGRES_USER
+          image: postgres:14.0-alpine
+          name: openfga-db
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - mountPath: /data/postgres
+              name: openfga-postgres-pvc
+      restartPolicy: Always
+      volumes:
+        - name: openfga-postgres-pvc
+          persistentVolumeClaim:
+            claimName: openfga-postgres-pvc
