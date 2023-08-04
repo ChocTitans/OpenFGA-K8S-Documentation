@@ -10,7 +10,7 @@ spec:
       serviceAccountName: openfga
       containers:
         - name: migrate-database
-          image: "openfga/openfga:v1.2.0"
+          image: "openfga/openfga:latest"
           args: ["migrate"]
           env:
             - name: OPENFGA_DATASTORE_ENGINE
