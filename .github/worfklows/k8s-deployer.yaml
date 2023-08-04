@@ -36,7 +36,7 @@ jobs:
       - name: Create ConfigMap file
         run: |
           cd ./k8s
-          echo "OPENFGA_PLAYGROUND_ENABLED=${{ env.OPENFGA_PLAYGROUND_ENABLED }}" > configmap.env
+          echo "OPENFGA_PLAYGROUND_ENABLED=${{ vars.OPENFGA_PLAYGROUND_ENABLED }}" > configmap.env
 
 
       - name: Kustomize build & apply
