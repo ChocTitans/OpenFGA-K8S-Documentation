@@ -24,23 +24,35 @@ jobs:
           curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash
           sudo mv kustomize /usr/local/bin/
 
-      - name: Create secrets file
+      - name: Create Secret file
+        working-directory: ./k8s
+        env:
+          SECRETS: '${{ toJson(secrets) }}'
         run: |
-          cd ./k8s
-          echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" > secret.env
-          echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> secret.env
-          echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> secret.env
-          echo "DATABASE_URL=postgresql://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@app-openfga-postgres:5432/${{ secrets.POSTGRES_DB }}" >> secret.env
-          
-      - name: Create ConfigMap file
+          for secret in $(echo "$SECRETS" | jq -r 'keys[]'); do
+            if [[ "$secret" != "github_token" && ! "$secret" =~ ^AWS_ ]]; then
+              value="$(jq -r --arg key "$secret" '.[$key]' <<< "$SECRETS")"
+              echo "$secret=$value" >> secret.env
+            fi
+          done
+          if [[ ! -s secret.env ]]; then
+            echo "Error: secrets.env is empty"
+            exit 1
+          fi
+    
+      - name: Append Github Vars to ConfigMap
+        working-directory: ./k8s
+        env:
+          VARS: '${{ toJson(vars) }}'
         run: |
-          cd ./k8s
-          echo "OPENFGA_PLAYGROUND_ENABLED=${{ vars.OPENFGA_PLAYGROUND_ENABLED }}" > configmap.env
-
+          for vars in $(echo "$VARS" | jq -r 'keys[]'); do
+            if [[ ! "$vars" =~ ^AWS_ ]]; then
+              value="$(jq -r --arg key "$vars" '.[$key]' <<< "$VARS")"
+              echo -e "\n$vars=$value" >> configmap.env
+            fi
+          done
 
       - name: Kustomize build & apply
+        working-directory: ./k8s
         run: |
-          cd ./k8s
-          kustomize build . | kubectl delete -f - || true
-          sleep 5
           kustomize build . | kubectl apply -f -

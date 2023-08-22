@@ -6,7 +6,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: gp2 # This is the storage class name that we created in CICD
+  storageClassName: gp3-retain-sc # This is the storage class name that we created in CICD
   resources:
     requests:
-      storage: 5Gi
+      storage: 20Gi

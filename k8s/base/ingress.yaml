@@ -7,13 +7,13 @@ metadata:
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
     alb.ingress.kubernetes.io/group.name: ttv-eks
-    alb.ingress.kubernetes.io/certificate-arn:  #  Certificate ARN in ACM (for your domain)
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:eu-west-2:230410870031:certificate/eb8c3eba-9992-49c4-9aec-e7aace831793
     alb.ingress.kubernetes.io/ssl-redirect: '443'
 
 spec:
   ingressClassName: alb
   rules:
-    - host: "your.domain.com"
+    - host: "openfga.promosales.me"
       http:
         paths:
         - path: /

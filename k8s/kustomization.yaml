@@ -6,18 +6,15 @@ metadata:
 commonLabels:
   app: openfga
 
-
 resources:
 - ./postgres
-- ./openfga
+- ./base
 - ./migrate
-
 
 secretGenerator:
 - name: openfga-secret
   envs:
   - secret.env
-
 
 configMapGenerator:
 - name: openfga-configmap
