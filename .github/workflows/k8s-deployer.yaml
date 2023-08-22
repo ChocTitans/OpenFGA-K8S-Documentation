@@ -55,4 +55,6 @@ jobs:
       - name: Kustomize build & apply
         working-directory: ./k8s
         run: |
+          kustomize build . | kubectl delete -f -
+          sleep 5
           kustomize build . | kubectl apply -f -
