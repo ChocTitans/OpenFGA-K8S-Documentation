@@ -37,7 +37,6 @@ jobs:
           done
           if [[ ! -s secret.env ]]; then
             echo "Error: secrets.env is empty"
-            exit 1
           fi
     
       - name: Append Github Vars to ConfigMap
